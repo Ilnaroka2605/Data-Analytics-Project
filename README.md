@@ -36,7 +36,7 @@ reports/insights.json  +  reports/report.md
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
+.venv\Scripts\activate
 pip install -r requirements.txt
 
 cp .env.example .env              # then add your OpenAI API key to .env
