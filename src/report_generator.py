@@ -1,48 +1,49 @@
 """
 report_generator.py
-
-Turns the structured JSON insights into a polished, human-readable
-Markdown report — the "automated report generation without manual
-postprocessing" step. Because the input is already clean, validated
-JSON, this is pure formatting: no parsing of messy LLM prose required.
+Turns the structured report insights into a polished, human-readable
+Markdown report
 """
-
 from __future__ import annotations
-
+from pathlib import Path
 from datetime import datetime
+from src.summarizer import InsightReport
 
 
-def build_markdown_report(stats: dict, insights: dict) -> str:
+def render_markdown(report: InsightReport, stats: dict) -> str:
+    anomaly_lines = [f"- {explanation}" for explanation in report.anomaly_explanations] or ["- None detected."]
+
     lines = [
-        f"# Sales Analytics Report",
-        f"*Generated {datetime.now().strftime('%Y-%m-%d %H:%M')} · "
-        f"Period {stats['period_start']} to {stats['period_end']}*",
+        f"# Sales Insight Report",
+        f"*Generated {datetime.now().strftime('%Y-%m-%d %H:%M')}*",
         "",
-        f"## Headline",
-        insights["headline"],
-        "",
-        f"## Key Metrics",
-        f"- Total revenue: £{stats['total_revenue']:,.2f}",
-        f"- Total profit: £{stats['total_profit']:,.2f}",
-        f"- Average margin: {stats['avg_margin_pct']:.1f}%",
+        "## Executive Summary",
+        report.executive_summary,
         "",
         "## Key Insights",
+        *[f"- {insight}" for insight in report.key_insights],
+        "",
+        "## Anomalies Detected",
+        *anomaly_lines,
+        "",
+        "## Recommendations",
+        *[f"{i+1}. {rec}" for i, rec in enumerate(report.recommendations)],
+        "",
+        "## Raw Totals",
+        f"- Revenue: ${stats['totals']['revenue']:,.2f}",
+        f"- Profit: ${stats['totals']['profit']:,.2f}",
+        f"- Units sold: {stats['totals']['units_sold']:,}",
     ]
-    lines += [f"- {item}" for item in insights["key_insights"]]
+    return "\n".join(lines)
 
-    lines += ["", "## Risks & Anomalies"]
-    lines += [f"- {item}" for item in insights["risks"]]
 
-    lines += ["", "## Recommendations"]
-    lines += [f"- {item}" for item in insights["recommendations"]]
+def save_report(report: InsightReport, stats: dict, output_dir: str | Path = "reports") -> Path:
+    output_dir = Path(output_dir)
+    output_dir.mkdir(exist_ok=True)
 
-    if stats.get("anomalies"):
-        lines += ["", "## Flagged Data Points", "", "| Date | Region | Product | Units Sold | Z-score |",
-                   "|---|---|---|---|---|"]
-        for a in stats["anomalies"]:
-            lines.append(
-                f"| {a['date']} | {a['region']} | {a['product']} | "
-                f"{a['units_sold']} | {a['z_score']} |"
-            )
+    md_path = output_dir / "report.md"
+    md_path.write_text(render_markdown(report, stats), encoding="utf-8")
 
-    return "\n".join(lines) + "\n"
+    json_path = output_dir / "insights.json"
+    json_path.write_text(report.model_dump_json(indent=2), encoding="utf-8")
+
+    return md_path
