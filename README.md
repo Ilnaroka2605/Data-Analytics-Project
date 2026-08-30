@@ -101,3 +101,10 @@ Data-Analytics-Project/
 - Add a Streamlit front end for non-technical users to upload their own files
 - Extend anomaly detection beyond z-scores (e.g. isolation forest)
 - Cache Gemini responses for identical inputs to save on API calls
+
+## About me
+
+I'm a Computer Science student at the University of Essex, graduated in July 2026, with practical data analytics experience from an internship in the oil and gas sector. I'm currently looking for data analyst roles in the UK.
+
+- [LinkedIn](https://www.linkedin.com/in/ilnara-temerbulatova/)
+- [Email](mailto:ilnara.temerbulatova2605@gmail.com)
