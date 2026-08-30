@@ -2,15 +2,14 @@
 
 An end-to-end pipeline that ingests raw sales data, computes aggregate
 statistics with pandas, sends them to the Google Gemini API for
-LLM-based summarisation, and returns a validated, structured report —
+LLM-based summarisation, and returns a validated, structured report
 enabling automated report generation with no manual postprocessing.
 
 ## Why this exists
 
 Manually reading through spreadsheets to write an executive summary
 doesn't scale. This project treats an LLM as a structured-output
-component in a normal data pipeline: pandas does the arithmetic (the
-source of truth), and the LLM's only job is to explain and prioritise
+component in a normal data pipeline: pandas does the arithmetic, and the LLM's only job is to explain and prioritise
 those numbers in plain English, returned as schema-validated JSON
 rather than free-form prose.
 
@@ -20,10 +19,10 @@ rather than free-form prose.
 raw CSV data
 │
 ▼
-data_loader.py → clean, validate, detect anomalies (z-score), aggregate
+data_loader.py → clean, validate, detect anomalies aggregate
 │
 ▼
-summarizer.py → Gemini API call, forced JSON output (Pydantic schema), 1 retry
+summarizer.py → Gemini API call, forced JSON output, 1 retry
 │
 ▼
 report_generator.py → renders validated JSON into a polished Markdown report
@@ -54,8 +53,7 @@ Get a Gemini API key at [aistudio.google.com/apikey](https://aistudio.google.com
 python -m src.pipeline --input data/sample_sales_data.csv --output reports
 ```
 
-This runs against the included synthetic sample dataset (with a few
-deliberate anomalies baked in) so you can see the whole pipeline work
+This runs against the included synthetic sample dataset so you can see the whole pipeline work
 without needing real data. Point `--input` at any CSV with the columns
 `date, region, product, units_sold, revenue, cost` to use your own data.
 
@@ -65,7 +63,7 @@ without needing real data. Point `--input` at any CSV with the columns
 pytest
 ```
 
-Tests cover the JSON schema validation logic — the part of the
+Tests cover the JSON schema validation logic the part of the
 pipeline responsible for catching a malformed Gemini response before
 it reaches the report generator. They don't call the live API, so
 they run free and offline.
@@ -74,7 +72,7 @@ they run free and offline.
 
 ```
 Data-Analytics-Project/
-├── .env # your real API key (not committed)
+├── .env # your real API key
 ├── .env.example
 ├── requirements.txt
 ├── data/
@@ -86,7 +84,7 @@ Data-Analytics-Project/
 │ └── pipeline.py # CLI entry point, orchestrates the three stages
 ├── tests/
 │ └── test_schema_validation.py
-└── reports/ # generated output (gitignored)
+└── reports/ # generated output
 ```
 
 ## Tech stack
