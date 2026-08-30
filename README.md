@@ -72,6 +72,7 @@ they run free and offline.
 
 ## Project structure
 
+```
 Data-Analytics-Project/
 ├── .env # your real API key (not committed)
 ├── .env.example
@@ -86,6 +87,7 @@ Data-Analytics-Project/
 ├── tests/
 │ └── test_schema_validation.py
 └── reports/ # generated output (gitignored)
+```
 
 ## Tech stack
 
